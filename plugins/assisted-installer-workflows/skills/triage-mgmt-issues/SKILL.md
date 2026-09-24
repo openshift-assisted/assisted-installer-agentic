@@ -46,6 +46,9 @@ context, and the per-issue result contract. Each invocation must:
 - Load and use `jira-triage-complexity` for that issue only.
 - Follow the skill's rubric and contract, fetching additional context only
   when needed.
+- Include a `label` field in the per-issue entry: `ai-triage-complexity-N`
+  where N is the integer complexity score from the rubric. Set `label` to
+  null for ungraded issues.
 - Not select issues, delegate, write files, mutate Jira or source, or run
   tests.
 - Return `{skill_used, result, error}` with the skill's unchanged JSON result;
@@ -58,6 +61,12 @@ an explicit declaration and disclose this verification limit in the summary.
 Known non-use, missing declarations, malformed responses, and execution
 failures are ungraded. Preserve valid results; never retry automatically,
 substitute skills, or grade in the parent.
+
+## Labeling
+
+The report includes a `label` field in each per-issue entry. The invoker is
+responsible for applying labels to Jira issues and removing any stale
+`ai-triage-complexity-*` labels from previous runs before applying the new one.
 
 ## Output and stopping conditions
 
