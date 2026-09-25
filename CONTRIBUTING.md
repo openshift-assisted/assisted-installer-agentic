@@ -38,6 +38,22 @@ Both marketplace catalogs must register every directory under `plugins/` exactly
 once at its canonical path. Each plugin's Claude and Codex manifests must agree
 on name and version; different plugins may have independent versions.
 
+## Development skill
+
+The repository-local [development skill](.agents/skills/assisted-installer-agentic-development/README.md)
+guides plugin placement, concise authoring, and successful validation before
+commits. It is excluded from distributed plugins and marketplace catalogs.
+
+Keep local skill sources in `.agents/skills/<name>/` and expose each to Claude
+with a relative directory symlink at `.claude/skills/<name>` pointing to
+`../../.agents/skills/<name>`. Do not duplicate sources in harness directories.
+See [Claude's skill locations](https://code.claude.com/docs/en/skills#choose-where-skills-load).
+
+Development-skill references may link across the repository. Full validation
+checks their canonical location, Claude symlinks, frontmatter, names, and Markdown
+links; plugin-only validation and isolation tests remain scoped to distributed
+plugins.
+
 ## Skill contract
 
 Every skill must document:

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -286,6 +287,57 @@ class Validator:
             if not isinstance(entry.get("category"), str) or not entry["category"].strip():
                 self.error(f"{marketplace.relative_to(self.repo_root)}: plugin entry missing category")
 
+    def validate_development_skills(self) -> list[Path]:
+        """Keep local skills canonical in .agents, with relative Claude aliases."""
+        skills_root = self.repo_root / ".agents" / "skills"
+        claude_root = self.repo_root / ".claude" / "skills"
+        for root in (skills_root.parent, skills_root, claude_root.parent, claude_root):
+            if root.is_symlink() or (root.exists() and not root.is_dir()):
+                self.error(f"{root.relative_to(self.repo_root)}: must be a real directory")
+                return []
+
+        skills: dict[str, Path] = {}
+        if skills_root.is_dir():
+            for skill in sorted(skills_root.iterdir()):
+                if skill.is_symlink() or (skill / "SKILL.md").is_symlink():
+                    self.error(f"{skill.relative_to(self.repo_root)}: local skill source must not be a symlink")
+                elif skill.is_dir():
+                    skills[skill.name] = skill
+                    self.validate_skill(skill)
+                    for markdown in skill.rglob("*.md"):
+                        self.validate_markdown(markdown)
+
+        aliases = {path.name: path for path in claude_root.iterdir()} if claude_root.is_dir() else {}
+        for name in sorted(skills.keys() | aliases.keys()):
+            alias = claude_root / name
+            label = alias.relative_to(self.repo_root)
+            if not alias.is_symlink():
+                self.error(f"{label}: must be a relative symlink to .agents/skills/{name}")
+                continue
+            if alias.readlink().is_absolute():
+                self.error(f"{label}: Claude skill symlink must be relative")
+                continue
+            try:
+                target = alias.resolve(strict=True)
+            except (OSError, RuntimeError):
+                self.error(f"{label}: broken or cyclic Claude skill symlink")
+                continue
+            if name not in skills or target != skills[name].resolve():
+                self.error(f"{label}: must target the matching .agents/skills/{name} directory")
+
+        # Ignore distributed plugins and do not follow Claude aliases.
+        for directory, children, files in os.walk(self.repo_root, followlinks=False):
+            root = Path(directory)
+            children[:] = [name for name in children if name != ".git"]
+            if root == self.repo_root:
+                children[:] = [name for name in children if name != "plugins"]
+            if "SKILL.md" in files and root.parent != skills_root:
+                self.error(
+                    f"{(root / 'SKILL.md').relative_to(self.repo_root)}: "
+                    "local skills must live directly in .agents/skills/<name>"
+                )
+        return list(skills.values())
+
     def run(self, plugin_name: str | None = None) -> int:
         plugins_root = self.repo_root / "plugins"
         if not plugins_root.is_dir():
@@ -317,12 +369,17 @@ class Validator:
         for plugin in plugins:
             all_skills.extend(self.validate_plugin_contents(plugin))
 
+        if not plugin_name:
+            all_skills.extend(self.validate_development_skills())
+
         for markdown in self.repo_root.glob("*.md"):
             self.validate_markdown(markdown)
 
         names: dict[str, Path] = {}
         for skill in all_skills:
             skill = skill / "SKILL.md"
+            if not skill.is_file():
+                continue  # Already reported by validate_skill.
             fields = self.frontmatter(skill)
             if not fields or not fields.get("name"):
                 continue

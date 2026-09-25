@@ -27,6 +27,52 @@ class StructureTests(unittest.TestCase):
     result, errors = self.validate()
     self.assertEqual(result, 0, errors)
 
+  def test_development_skill_can_reference_repository_without_registration(self):
+    skill = self.root / ".agents/skills/review-contract"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text(
+      "---\nname: review-contract\ndescription: Review instructions.\n---\n"
+      "\n[Repository](../../../README.md)\n", encoding="utf-8",
+    )
+    aliases = self.root / ".claude/skills"
+    aliases.mkdir(parents=True)
+    (aliases / skill.name).symlink_to(f"../../.agents/skills/{skill.name}")
+    result, errors = self.validate()
+    self.assertEqual(result, 0, errors)
+
+  def test_development_skill_missing_entrypoint_is_reported(self):
+    (self.root / ".agents/skills/review-contract").mkdir(parents=True)
+    result, errors = self.validate()
+    self.assertEqual(result, 1)
+    self.assertIn(".agents/skills/review-contract: missing SKILL.md", errors)
+    result, errors = self.validate("workflow")
+    self.assertEqual(result, 0, errors)
+
+  def test_development_skill_names_and_readme_links_are_validated(self):
+    skill = self.root / ".agents/skills/review-contract"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text(
+      "---\nname: wrong\ndescription: Review instructions.\n---\n", encoding="utf-8",
+    )
+    (skill / "README.md").write_text(
+      "# Review\n\n[Missing](missing.md)\n[Outside](../../../../outside.md)\n",
+      encoding="utf-8",
+    )
+    result, errors = self.validate()
+    self.assertEqual(result, 1)
+    for message in ("name must be review-contract", "missing link target", "link escapes repository"):
+      self.assertTrue(any(message in error for error in errors), errors)
+
+  def test_development_and_plugin_skill_names_cannot_collide(self):
+    skill = self.root / ".agents/skills/shared-skill"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text(
+      "---\nname: shared-skill\ndescription: Review instructions.\n---\n", encoding="utf-8",
+    )
+    result, errors = self.validate()
+    self.assertEqual(result, 1)
+    self.assertTrue(any("duplicate skill name shared-skill" in error for error in errors), errors)
+
   def test_plugin_links_cannot_escape_to_sibling_or_root(self):
     original = self.skill.read_text(encoding="utf-8")
     links = (
