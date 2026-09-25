@@ -11,18 +11,18 @@ permissions:
 
 jobs:
   markdown:
-    name: Markdown and links
+    name: Repository validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
-        with:
-          globs: |
-            **/*.md
-            .agents/skills/**/*.md
-      - uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411
-        with:
-          args: --config .lychee.toml '**/*.md' '.agents/skills/**/*.md'
-          fail: true
+      - name: Build validation image
+        run: docker build --file Dockerfile.assisted-installer-agentic-validation --tag assisted-installer-agentic-validation:ci .
+      - name: Run validation
+        run: >-
+          docker run --rm --network host
+            --volume "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}"
+            --workdir "${GITHUB_WORKSPACE}"
+            assisted-installer-agentic-validation:ci
+            make validate

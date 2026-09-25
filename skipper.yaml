@@ -1,0 +1,4 @@
+build-container-image: assisted-installer-agentic-validation
+
+containers:
+  assisted-installer-agentic-validation: Dockerfile.assisted-installer-agentic-validation

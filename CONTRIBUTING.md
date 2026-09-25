@@ -73,32 +73,32 @@ plugin release is intended.
 
 ## Development dependencies
 
-- [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2#install) on
-  your `PATH` for Markdown formatting checks.
-- [Lychee](https://lychee.cli.rs/guides/getting-started/) on your `PATH` for
-  Markdown link checks.
-- Python 3.10 or later for structural validation and tests.
-- Make to run the check targets.
+Run the checks through [Skipper](https://github.com/stratoscale/skipper):
 
-These tools are not required to use the plugins.
+```bash
+skipper make validate
+skipper make test
+```
+
+Skipper and the packaged development tooling are not required to use the plugins.
 
 ## Checks
 
 Run before submitting changes:
 
 ```bash
-make validate
-make test
+skipper make validate
+skipper make test
 ```
 
-`make validate` runs the Python validator for frontmatter, names, plugin-local
+`skipper make validate` runs the Python validator for frontmatter, names, plugin-local
 link boundaries, matching manifests, catalog coverage, and local Claude dependency
 registration. It then runs markdownlint-cli2 with `.markdownlint-cli2.yaml` for
 Markdown formatting and Lychee with `.lychee.toml` for local Markdown links.
 Lychee checks local paths and external URL availability. The lint CI job uses
 the same configurations and Markdown glob.
 
-`make test` runs regression tests for the Python validator, including validation
+`skipper make test` runs regression tests for the Python validator, including validation
 of the current repository. It also copies each plugin into a temporary directory
 to validate its manifests, skills, and references independently of the checkout.
 Dependencies remain separate plugins and must be installed by the

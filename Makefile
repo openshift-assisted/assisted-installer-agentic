@@ -1,7 +1,7 @@
 .PHONY: validate test
 
 validate:
-	@printf '=== Python validation ===\n'
+	@printf '\n=== Python validation ===\n'
 	python3 scripts/validate.py
 	@printf '\n=== Markdown lint ===\n'
 	markdownlint-cli2 '**/*.md' '.agents/skills/**/*.md'

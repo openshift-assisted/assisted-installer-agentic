@@ -1,0 +1,29 @@
+FROM docker.io/lycheeverse/lychee:0.24.2-alpine@sha256:2255c0b916cc8fc4193f59a4549358a6bae0f7d4ea16b5e1dd4c3b2733c35504 AS lychee
+
+FROM node:22.22.2-bookworm-slim@sha256:9f6d5975c7dca860947d3915877f85607946403fc55349f39b4bc3688448bb6e
+
+ARG MARKDOWNLINT_CLI2_VERSION=0.23.3
+ARG TAG=local
+
+LABEL org.opencontainers.image.revision="${TAG}"
+
+ENV LANG=C.UTF-8 \
+	LC_ALL=C.UTF-8 \
+	NPM_CONFIG_UPDATE_NOTIFIER=false \
+	PIP_DISABLE_PIP_VERSION_CHECK=1
+
+RUN apt-get update \
+	&& apt-get install --no-install-recommends --yes \
+		ca-certificates \
+		git \
+		make \
+		python3 \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN npm install --global --ignore-scripts --no-audit --no-fund \
+	"markdownlint-cli2@${MARKDOWNLINT_CLI2_VERSION}" \
+	&& npm cache clean --force
+
+COPY --from=lychee /usr/local/bin/lychee /usr/local/bin/lychee
+
+WORKDIR /workspace
