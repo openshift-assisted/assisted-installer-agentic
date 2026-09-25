@@ -20,9 +20,9 @@ jobs:
       - name: Build validation image
         run: docker build --file Dockerfile.assisted-installer-agentic-validation --tag assisted-installer-agentic-validation:ci .
       - name: Run validation
-        run: >-
-          docker run --rm --network host
-            --volume "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}"
-            --workdir "${GITHUB_WORKSPACE}"
-            assisted-installer-agentic-validation:ci
+        run: |
+          docker run --rm --network host \
+            --volume "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}" \
+            --workdir "${GITHUB_WORKSPACE}" \
+            assisted-installer-agentic-validation:ci \
             make validate
