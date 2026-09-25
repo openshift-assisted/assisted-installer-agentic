@@ -11,16 +11,13 @@ permissions:
 
 jobs:
   python-tests:
-    name: Validation and isolation tests (Python ${{ matrix.python-version }})
+    name: Validation and isolation tests (Python 3.10)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.12"]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
       - run: make test

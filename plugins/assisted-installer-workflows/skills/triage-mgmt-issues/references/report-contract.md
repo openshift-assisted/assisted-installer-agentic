@@ -1,8 +1,8 @@
 # Workflow report contract
 
-## Worker response
+## Per-issue result
 
-Pass this response contract to each worker. Return one JSON object:
+Each issue assessment returns one JSON object:
 
 - `skill_used`: `assisted-installer-skills/jira-triage-complexity` when loaded and
   used, otherwise null. This is a logical identity, not an installation path.
@@ -13,7 +13,8 @@ Pass this response contract to each worker. Return one JSON object:
 
 The wrapper belongs to this workflow; do not add its fields to the shared skill's
 JSON. A declaration is not independent execution proof. If traces are unavailable,
-disclose that required-skill use is worker-reported in the aggregate summary.
+disclose that required-skill use is reported rather than independently verified
+in the aggregate summary.
 
 ## Aggregate report
 
@@ -39,9 +40,13 @@ enumeration. Preserve unknown metadata as null rather than inventing values.
 Each issue entry contains:
 
 - `issue_key`, `issue_url`, `summary`: selection metadata; unknown values are null.
-- `worker_id`: dispatched worker identifier, or null if not started.
-- `skill_used`: worker-reported skill identity, or null if unavailable.
+- `skill_used`: reported skill identity, or null if unavailable.
 - `outcome`: `graded` or `ungraded`.
+- `label`: the Jira label to apply, formatted as `ai-triage-complexity-N` where N
+  is the integer complexity score, or null if the issue was not graded.
+- `confidence_label`: the Jira label to apply, formatted as
+  `ai-triage-confidence-{confidence}` where `{confidence}` is `high`, `medium`,
+  or `low`, or null if the issue was not graded.
 - `result`: validated, unchanged JSON returned by `jira-triage-complexity`, or null
   if no valid result was obtained. A valid blocked result is retained as ungraded.
 - `error`: reason for an ungraded outcome, or null when graded.
