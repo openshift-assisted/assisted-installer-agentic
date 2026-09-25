@@ -66,12 +66,13 @@ marketplace release metadata when a new plugin release is intended.
 
 ## Validate before committing
 
-Immediately before creating a git commit, run `skipper make validate` and
-`skipper make test` against the final changes. These commands are not required
-after individual edits, when no commit is being created, or merely because a
-task is complete. Both commands MUST exit with status 0, with all validation
-checks and tests passing. Inspect their output to confirm this. If either
-fails, fix the issue and rerun the affected command before committing. If
-either cannot run, report the exact command and error and stop without
+When `plugins/` or `scripts/` have been modified, immediately before creating a
+git commit run `skipper make validate` and `skipper make test` against the
+final changes. These commands are not required for commits limited to other
+paths, after individual edits, when no commit is being created, or merely
+because a task is complete. Both commands MUST exit with status 0, with all
+validation checks and tests passing. Inspect their output to confirm this. If
+either fails, fix the issue and rerun the affected command before committing.
+If either cannot run, report the exact command and error and stop without
 committing. Commit only when requested. Return a concise summary of changes
 and check results, or the blocker preventing completion.
