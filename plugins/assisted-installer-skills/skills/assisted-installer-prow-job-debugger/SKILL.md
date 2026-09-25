@@ -46,7 +46,7 @@ Always structure the answer per [report-format.md](references/report-format.md).
 Load these on demand via the relative links below (paths are relative to this skill directory so they resolve when the skill is installed from git into a cloud agent). Do not load every file up front — open only what the current investigation step needs.
 
 | File | When to load | What you get |
-|------|--------------|--------------|
+| ------ | -------------- | -------------- |
 | [gcs-and-config.md](references/gcs-and-config.md) | Steps 1 and 5; also when resolving a test with no GCS URL, reading `finished.json`, or extracting a step’s bash script from the step graph | URL → repo/branch/test-as parsing; workflow/`ref` walk in openshift/release; `finished.json` fields; jq to list failed steps and dump `<test-as>-commands` scripts |
 | [investigation.md](references/investigation.md) | Steps 2 and 7; whenever several steps failed, the first finding looks like a symptom, or only ofcir/rbac dirs exist | Which failure to triage first; skip-gather rules; false-positive earlier steps; symptom→log table and terminal-cause stop list; triage checklist; RED ALERT |
 | [architecture-and-repos.md](references/architecture-and-repos.md) | Step 6; when choosing a GitHub org/repo/branch or raw URL for component source | Repo/branch lookup table, wrong-guess table, external CI docs |

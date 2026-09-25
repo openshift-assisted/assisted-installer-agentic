@@ -21,7 +21,7 @@ A step log that says "installation failed", "nodes never became Ready", "pod not
 Treat these as prompts to open gather / component logs, not as conclusions:
 
 | Symptom in step log | Continue into |
-|---------------------|---------------|
+| --------------------- | --------------- |
 | Masters / workers never came up, bootstrap incomplete, install timed out waiting for nodes | `gather-extra/artifacts/nodes/*/journal` (and audit); sosreports under operator/devscripts gather; machine / BareMetalHost status if present |
 | A pod / deployment never became Ready | That pod's logs in `gather-extra/artifacts/pods/` (`<ns>_<pod>_<container>.log`); events; operator gather logs for the same component |
 | Operator / CSV / subscription stuck | Operator gather (`assisted-baremetal-operator-gather`), OLM events, CSV/subscription JSON, related pod logs |

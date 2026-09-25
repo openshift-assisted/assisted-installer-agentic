@@ -3,7 +3,7 @@
 ## External documentation
 
 | Topic | URL |
-|-------|-----|
+| ------- | ----- |
 | CI Operator | [docs.ci.openshift.org/architecture/ci-operator](https://docs.ci.openshift.org/architecture/ci-operator/) |
 | Multi-stage / step registry | [docs.ci.openshift.org/architecture/step-registry](https://docs.ci.openshift.org/architecture/step-registry/) |
 | OpenShift CI docs (home) | [docs.ci.openshift.org](https://docs.ci.openshift.org/) |
@@ -37,7 +37,7 @@ Resolve branch in this order:
 Start from this table when mapping a prow job or step script to source. Do **not** probe random org/repo combinations — derive unknown paths from step-registry `*-commands.sh` `source()` lines first.
 
 | GitHub repo | Default branch | Branch for CI jobs | Role / job name hint |
-|-------------|----------------|--------------------|----------------------|
+| ------------- | ---------------- | -------------------- | ---------------------- |
 | `openshift/release` | `master` | **`job_name` branch** (e.g. `release-ocm-2.16`) | ci-operator config, step-registry |
 | `openshift/assisted-service` | `master` | **`job_name` branch** | `assisted-service-...`, operator deploy scripts |
 | `openshift/assisted-test-infra` | `master` | **`job_name` branch** | `assisted-test-infra-...`, bare-metal e2e |
@@ -57,7 +57,7 @@ Start from this table when mapping a prow job or step script to source. Do **not
 ### Wrong guesses (avoid)
 
 | Do not use | Use instead |
-|------------|-------------|
+| ------------ | ------------- |
 | `openshift/dev-scripts` | `openshift-metal3/dev-scripts` |
 | `master` on `openshift/release` when `job_name` contains `release-ocm-2.16` | `release-ocm-2.16` |
 | `main` on `openshift/assisted-service` when `job_name` contains `master` | `master` |

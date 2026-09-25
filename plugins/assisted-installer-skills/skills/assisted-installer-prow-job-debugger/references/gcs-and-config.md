@@ -74,7 +74,7 @@ curl -s "<job-url>/finished.json" | jq .
 Key fields under `refs`:
 
 | Field | Use |
-|-------|-----|
+| ------- | ----- |
 | `refs.org`, `refs.repo` | Component repository tested |
 | `refs.base_ref` | Branch (e.g. `master`, `release-4.22`) |
 | `refs.base_sha` | Commit SHA on the branch — **periodic**, **postsubmit**, **branch-ci** |

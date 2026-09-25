@@ -9,7 +9,7 @@ clones here — download the repo tarball at the job’s commit/branch (see
 ## Key paths (assisted-service)
 
 | Path | Role |
-|------|------|
+| ------ | ------ |
 | `deploy/operator/deploy.sh` | Top-level disconnected/connected hub setup entry |
 | `deploy/operator/setup_assisted_operator.sh` | Operator install, mirror ConfigMaps, registries for the hub |
 | `deploy/operator/mirror_utils.sh` | `ocp_mirror_release`, catalog/image mirror helpers, registry helpers |
@@ -41,7 +41,7 @@ step’s product path never ran — do not debug spoke/CAPI behavior from that r
 ## Hub vs spoke vs day-2 guest
 
 | Layer | What it is | Where logs usually are |
-|-------|------------|------------------------|
+| ------- | ------------ | ------------------------ |
 | Provisioner / “packet” host | ofcir machine running libvirt + scripts | Step `build-log.txt`; `sosreport-*` in baremetalds or operator gather |
 | Hub cluster | OCP from dev-scripts; assisted operator runs here | `gather-extra`, operator logs, hub journals if gather-extra has nodes |
 | Spoke / hosted | Cluster created by ZTP or HyperShift CAPI | Test step log; assisted CRs; sometimes `capi/` / hive dumps |

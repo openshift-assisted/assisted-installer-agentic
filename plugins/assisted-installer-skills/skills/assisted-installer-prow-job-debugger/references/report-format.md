@@ -89,7 +89,7 @@ URL:
 `.../pr-logs/pull/openshift_assisted-test-infra/2810/pull-ci-openshift-assisted-test-infra-master-e2e-metal-assisted-external-4-22/2057040220838170624/`
 
 | Field | Value |
-|-------|-------|
+| ------- | ------- |
 | Prow job | `pull-ci-openshift-assisted-test-infra-master-e2e-metal-assisted-external-4-22` |
 | Test `as` | `e2e-metal-assisted-external-4-22` |
 | Artifacts dir | `artifacts/e2e-metal-assisted-external-4-22/` |

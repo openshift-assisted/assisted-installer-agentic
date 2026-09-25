@@ -35,7 +35,7 @@ Present when assisted-service is deployed as an operator. Holds operator
 deployment state and related component dumps. Typical contents:
 
 | Path / file | Contents |
-|-------------|----------|
+| ------------- | ---------- |
 | `assisted-service.log`, `assisted-image-service.log`, `infrastructure-operator.log` | Core assisted operator / service container logs |
 | `assisted-service-operator-catalog.log`, `assisted-service-operator-subscription.log`, `oc_install_plan.log` | OLM install path (catalog, subscription, install plan) |
 | `oc_get_pods.yaml`, `oc_get_deployments.yaml`, `oc_get_nodes.yaml`, `oc_get_replicasets.yaml` | Cluster object dumps at gather time |
@@ -52,7 +52,7 @@ CAPI/Hive/HyperShift object state on operator-based jobs.
 Also commonly present on operator gather (when the script dumped them):
 
 | Path / file | Contents |
-|-------------|----------|
+| ------------- | ---------- |
 | `agents/*.yaml`, `baremetalhosts/*.yaml`, `infraenvs/*.yaml` | Assisted CR snapshots at gather time |
 | `sos/virtual_hosts.json` | DHCP name → address map for VMs the gather attempted to reach |
 | `sos/<host>/journal.log` (optional) | Guest journal **only if** gather’s in-job SSH + copy succeeded for that host |
@@ -71,7 +71,7 @@ Present when [dev-scripts](https://github.com/openshift-metal3/dev-scripts) is
 used as part of the deployment (baremetalds / metal3 path). Typical contents:
 
 | Path / file | Contents |
-|-------------|----------|
+| ------------- | ---------- |
 | `sosreport-*.tar.xz` (+ `.sha256`) | Host sosreports from the CI / provisioner hosts |
 | `libvirt-logs.tar` (or `.tar.gz`) | Libvirt domain / qemu console and serial logs |
 | `squid-logs-*.tar` | Proxy (squid) logs from the disconnected / mirrored path when a proxy was used |
@@ -99,7 +99,7 @@ OpenShift cluster resource dump (not assisted-specific). Rich source for
 cluster-wide state after a failure. Typical layout:
 
 | Path | Contents |
-|------|----------|
+| ------ | ---------- |
 | `pods/` | Per-container logs named `<ns>_<pod>_<container>.log` (and `*_previous.log` for restarted containers) — **primary place for all pod logs** |
 | `nodes/<node-name>/` | Per-node host data: `journal`, `audit`, `heap`, `lsmod` |
 | `events.json` | Cluster events |
@@ -124,7 +124,7 @@ extraworkers / day-2 hosts still outside the cluster).
 Basic must-gather output. Often includes:
 
 | Path / file | Contents |
-|-------------|----------|
+| ------------- | ---------- |
 | `must-gather.tar` | Packed must-gather; may contain per-host data including journal |
 | `camgi.html`, `event-filter.html` | HTML helpers for browsing gather / events |
 | `install-status.txt`, `junit_install.xml` | Install status summaries when present |
@@ -157,7 +157,7 @@ do not assume interactive access to the CI host or guest VMs.
 ### Often absent or misleading in GCS
 
 | Need | Why it is missing / weak |
-|------|---------------------------|
+| ------ | --------------------------- |
 | Guest `journalctl` after ostree install | Serial quiet after GRUB; gather’s in-job SSH journal collect is best-effort or skipped when hub install OK |
 | Guest `/etc` (e.g. `registries.conf`, kubelet/CRI config) | Not a standard artifact; only inside a successful guest sos from gather |
 | Extraworker / day-2 host that never became a node | Outside hub `gather-extra`; easy to miss if operator-gather’s in-job SSH failed |
