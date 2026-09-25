@@ -79,8 +79,8 @@ make test
 link boundaries, matching manifests, catalog coverage, and local Claude dependency
 registration. It then runs markdownlint-cli2 with `.markdownlint-cli2.yaml` for
 Markdown formatting and Lychee with `.lychee.toml` for local Markdown links.
-Lychee runs offline, so it does not check external URL availability. The lint CI
-job uses the same configurations and Markdown glob.
+Lychee checks local paths and external URL availability. The lint CI job uses
+the same configurations and Markdown glob.
 
 `make test` runs regression tests for the Python validator, including validation
 of the current repository. It also copies each plugin into a temporary directory
