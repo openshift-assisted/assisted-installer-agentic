@@ -42,6 +42,11 @@ Each issue entry contains:
 - `issue_key`, `issue_url`, `summary`: selection metadata; unknown values are null.
 - `skill_used`: reported skill identity, or null if unavailable.
 - `outcome`: `graded` or `ungraded`.
+- `label`: the Jira label to apply, formatted as `ai-triage-complexity-N` where N
+  is the integer complexity score, or null if the issue was not graded.
+- `confidence_label`: the Jira label to apply, formatted as
+  `ai-triage-confidence-{confidence}` where `{confidence}` is `high`, `medium`,
+  or `low`, or null if the issue was not graded.
 - `result`: validated, unchanged JSON returned by `jira-triage-complexity`, or null
   if no valid result was obtained. A valid blocked result is retained as ungraded.
 - `error`: reason for an ungraded outcome, or null when graded.

@@ -26,7 +26,7 @@ limits assessments, not the query.
 1. Verify access to the `MGMT` project and search with this exact JQL:
 
    ```jql
-   project = MGMT AND issuetype = Bug AND assignee IS EMPTY AND status IN ("To Do", "New") ORDER BY key ASC
+   project = MGMT AND issuetype = Bug AND assignee IS EMPTY AND status IN ("To Do", "New") AND labels NOT IN (ai-triage-complexity-1, ai-triage-complexity-2, ai-triage-complexity-3, ai-triage-complexity-4, ai-triage-complexity-5, ai-triage-complexity-6, ai-triage-complexity-7, ai-triage-complexity-8, ai-triage-complexity-9, ai-triage-complexity-10, ai-triage-confidence-high, ai-triage-confidence-medium, ai-triage-confidence-low) ORDER BY key ASC
    ```
 
 2. Complete pagination even for limited assessments, deduplicating by key while
@@ -46,6 +46,13 @@ context, and the per-issue result contract. Each invocation must:
 - Load and use `jira-triage-complexity` for that issue only.
 - Follow the skill's rubric and contract, fetching additional context only
   when needed.
+- Include a `label` field in the per-issue entry: `ai-triage-complexity-N`
+  where N is the integer complexity score from the rubric. Set `label` to
+  null for ungraded issues.
+- Include a `confidence_label` field in the per-issue entry:
+  `ai-triage-confidence-{confidence}` where `{confidence}` is the confidence
+  value from the grading result (`high`, `medium`, or `low`). Set
+  `confidence_label` to null for ungraded issues.
 - Not select issues, delegate, write files, mutate Jira or source, or run
   tests.
 - Return `{skill_used, result, error}` with the skill's unchanged JSON result;
@@ -58,6 +65,11 @@ an explicit declaration and disclose this verification limit in the summary.
 Known non-use, missing declarations, malformed responses, and execution
 failures are ungraded. Preserve valid results; never retry automatically,
 substitute skills, or grade in the parent.
+
+## Labeling
+
+The report includes `label` and `confidence_label` fields in each per-issue
+entry. The invoker is responsible for applying labels to Jira issues.
 
 ## Output and stopping conditions
 
