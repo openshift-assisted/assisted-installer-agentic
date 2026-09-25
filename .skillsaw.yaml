@@ -1,0 +1,13 @@
+version: "0.20.0"
+
+rules:
+  # Plugin README files are not part of this repository's package contract.
+  claude-plugin-readme:
+    enabled: false
+
+# Analyze operational references as well as SKILL.md files.
+content-paths:
+  - "plugins/**/skills/**/*.md"
+
+# Keep Skillsaw advisory for warnings and informational findings.
+fail-on: error

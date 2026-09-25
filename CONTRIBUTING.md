@@ -94,9 +94,10 @@ skipper make test
 `skipper make validate` runs the Python validator for frontmatter, names, plugin-local
 link boundaries, matching manifests, catalog coverage, and local Claude dependency
 registration. It then runs markdownlint-cli2 with `.markdownlint-cli2.yaml` for
-Markdown formatting and Lychee with `.lychee.toml` for local Markdown links.
-Lychee checks local paths and external URL availability. The lint CI job uses
-the same configurations and Markdown glob.
+Markdown formatting, Lychee with `.lychee.toml` for local Markdown links, and
+Skillsaw with `.skillsaw.yaml` for static skill, plugin, content, and security
+checks. Lychee checks local paths and external URL availability. The lint CI job
+uses the same configurations and Markdown glob.
 
 `skipper make test` runs regression tests for the Python validator, including validation
 of the current repository. It also copies each plugin into a temporary directory
@@ -105,3 +106,5 @@ Dependencies remain separate plugins and must be installed by the
 consuming harness. Marketplace installation uses plugin directories directly.
 
 These structural checks do not establish harness compatibility or skill behavior.
+Skillsaw is an additional static-quality check; it does not replace the Python
+validator or establish harness compatibility or skill behavior.
