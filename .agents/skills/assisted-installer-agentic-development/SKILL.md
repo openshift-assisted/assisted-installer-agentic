@@ -1,6 +1,6 @@
 ---
 name: assisted-installer-agentic-development
-description: Develop and maintain skills, workflows, and tooling in the assisted-installer-agentic repository.
+description: Use when developing or modifying skills, workflows, and tooling in the assisted-installer-agentic repository.
 ---
 
 # Assisted Installer Agentic development

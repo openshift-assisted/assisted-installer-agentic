@@ -1,6 +1,6 @@
 ---
 name: jira-triage-complexity
-description: Assess exactly one Jira issue and assign an evidence-based implementation complexity rating from 1 to 10, with confidence, reasoning, and sources.
+description: Use when assessing exactly one Jira issue and assigning an evidence-based implementation complexity rating from 1 to 10, with confidence, reasoning, and sources.
 ---
 
 # Jira Triage Complexity

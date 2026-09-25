@@ -1,6 +1,6 @@
 ---
 name: triage-mgmt-issues
-description: Grade unassigned bugs in the MGMT Jira project in To Do or New status by applying jira-triage-complexity to each issue.
+description: Use when grading unassigned MGMT Jira bugs in To Do or New status by applying jira-triage-complexity to each issue.
 ---
 
 # Triage MGMT Issues
