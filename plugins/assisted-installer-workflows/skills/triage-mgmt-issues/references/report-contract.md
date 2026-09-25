@@ -51,10 +51,6 @@ Each issue entry contains:
   if no valid result was obtained. A valid blocked result is retained as ungraded.
 - `error`: reason for an ungraded outcome, or null when graded.
 
-The invoker should remove any existing `ai-triage-complexity-*` and
-`ai-triage-confidence-*` labels before applying the new ones to avoid stale
-labels from previous triage runs.
-
 Require `selected = graded + ungraded = length(selected_keys) = length(issues)`.
 Counts describe selected issues, not all project matches when a limit applies or
 retrieval is incomplete. A successful limited run can be `complete` even when

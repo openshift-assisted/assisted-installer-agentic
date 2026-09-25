@@ -69,9 +69,7 @@ substitute skills, or grade in the parent.
 ## Labeling
 
 The report includes `label` and `confidence_label` fields in each per-issue
-entry. The invoker is responsible for applying labels to Jira issues and
-removing any stale `ai-triage-complexity-*` and `ai-triage-confidence-*`
-labels from previous runs before applying the new ones.
+entry. The invoker is responsible for applying labels to Jira issues.
 
 ## Output and stopping conditions
 
