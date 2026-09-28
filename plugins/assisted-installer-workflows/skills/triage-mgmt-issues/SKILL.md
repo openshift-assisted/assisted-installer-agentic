@@ -26,7 +26,7 @@ limits assessments, not the query.
 1. Verify access to the `MGMT` project and search with this exact JQL:
 
    ```jql
-   project = MGMT AND issuetype = Bug AND assignee IS EMPTY AND status IN ("To Do", "New") ORDER BY key ASC
+   project = MGMT AND issuetype = Bug AND assignee IS EMPTY AND status IN ("To Do", "New") AND labels NOT IN (ai-triage-complexity-1, ai-triage-complexity-2, ai-triage-complexity-3, ai-triage-complexity-4, ai-triage-complexity-5, ai-triage-complexity-6, ai-triage-complexity-7, ai-triage-complexity-8, ai-triage-complexity-9, ai-triage-complexity-10, ai-triage-confidence-high, ai-triage-confidence-medium, ai-triage-confidence-low, ai-triage-skip) ORDER BY key ASC
    ```
 
 2. Complete pagination even for limited assessments, deduplicating by key while
@@ -46,6 +46,18 @@ context, and the per-issue result contract. Each invocation must:
 - Load and use `jira-triage-complexity` for that issue only.
 - Follow the skill's rubric and contract, fetching additional context only
   when needed.
+- Include a `label` field in the per-issue entry: `ai-triage-complexity-N`
+  where N is the integer complexity score from the rubric. Set `label` to
+  null for skipped or ungraded issues.
+- Include a `confidence_label` field in the per-issue entry:
+  `ai-triage-confidence-{confidence}` where `{confidence}` is the confidence
+  value from the grading result (`high` or `medium`). Set
+  `confidence_label` to null for skipped or ungraded issues.
+- Include a `skip_label` field and a `skip_reason` field in the per-issue
+  entry. When the issue is graded normally, both are null. When the issue
+  must be skipped, set `skip_label` to `ai-triage-skip` and `skip_reason`
+  to a concise explanation of which criterion applied. A skipped issue must
+  not receive `label` or `confidence_label`; it is recorded as `ungraded`.
 - Not select issues, delegate, write files, mutate Jira or source, or run
   tests.
 - Return `{skill_used, result, error}` with the skill's unchanged JSON result;
@@ -58,6 +70,37 @@ an explicit declaration and disclose this verification limit in the summary.
 Known non-use, missing declarations, malformed responses, and execution
 failures are ungraded. Preserve valid results; never retry automatically,
 substitute skills, or grade in the parent.
+
+### Skip decision
+
+After interpreting each per-issue result, apply `ai-triage-skip` when any of
+the following criteria is met:
+
+1. **Access denial**: the agent lacks permission to view links, attachments,
+   or other information required for the assessment.
+2. **Missing or vague description**: the issue description is absent or too
+   vague to support a defensible complexity score.
+3. **Low confidence**: the grading result is `complete` but has
+   `confidence: low`. The single-issue skill may return a provisional
+   low-confidence rating; this workflow treats it as ungradable.
+4. **No valid result**: the agent cannot produce a defensible complexity
+   score on the current run. This includes a `blocked` result from the
+   skill, a malformed or missing result, and any execution or loading
+   failure that prevents obtaining a valid outcome.
+
+A skipped issue is recorded as `ungraded` with `skip_label` set to
+`ai-triage-skip` and `skip_reason` set to a concise explanation of the
+criterion that applied. Its `label` and `confidence_label` must be null.
+A normally graded issue (valid score with confidence `high` or `medium`)
+keeps its `label` and `confidence_label` values and has `skip_label` and
+`skip_reason` set to null.
+
+## Labeling
+
+The report includes `label`, `confidence_label`, and `skip_label` fields in
+each per-issue entry. The invoker applies the resulting labels to Jira issues;
+no labels are removed. A graded issue receives `label` and `confidence_label`.
+A skipped issue receives only `skip_label` (`ai-triage-skip`).
 
 ## Output and stopping conditions
 
