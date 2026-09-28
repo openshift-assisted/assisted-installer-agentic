@@ -38,11 +38,11 @@ Both marketplace catalogs must register every directory under `plugins/` exactly
 once at its canonical path. Each plugin's Claude and Codex manifests must agree
 on name and version; different plugins may have independent versions.
 
-## Development skill
+## Development guidance
 
-The repository-local [development skill](.agents/skills/assisted-installer-agentic-development/README.md)
-guides plugin placement, concise authoring, and successful validation before
-commits. It is excluded from distributed plugins and marketplace catalogs.
+Follow [AGENTS.md](AGENTS.md) for the required repository-local skills when
+changing this repository. These guide development and documentation and are
+excluded from distributed plugins and marketplace catalogs.
 
 Keep local skill sources in `.agents/skills/<name>/` and expose each to Claude
 with a relative directory symlink at `.claude/skills/<name>` pointing to
@@ -73,16 +73,13 @@ plugin release is intended.
 
 ## Development dependencies
 
-Run the checks through [Skipper](https://github.com/stratoscale/skipper):
-
-```bash
-skipper make validate
-skipper make test
-```
-
-Skipper and the packaged development tooling are not required to use the plugins.
+Development checks use [Skipper](https://github.com/stratoscale/skipper) and the
+packaged validation tooling. These dependencies are not required to use the plugins.
 
 ## Checks
+
+See the [validation guide](docs/validation.md) for tool purposes, configuration,
+and coverage limits.
 
 Run before submitting changes:
 
