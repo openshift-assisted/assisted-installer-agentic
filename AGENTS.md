@@ -26,3 +26,6 @@ scripts/                     # deterministic validation and isolation tests
 
 Use the [repository development skill](.agents/skills/assisted-installer-agentic-development/SKILL.md)
 for any modification to this repository.
+
+For changes to `docs/`, the top-level README, or contributor documentation, also
+load and use the [documentation skill](.agents/skills/assisted-installer-agentic-docs/SKILL.md).
