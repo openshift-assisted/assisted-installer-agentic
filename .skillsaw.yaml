@@ -4,10 +4,18 @@ rules:
   # Plugin README files are not part of this repository's package contract.
   claude-plugin-readme:
     enabled: false
+  content-mcp-tool-name:
+    enabled: true
+  content-inline-tool-examples:
+    enabled: true
+    severity: info
+  agentskill-unreferenced-files:
+    # A directory mention does not establish that each bundled file is used.
+    directory_mention_covers: false
 
 # Analyze operational references as well as SKILL.md files.
 content-paths:
   - "plugins/**/skills/**/*.md"
 
-# Keep Skillsaw advisory for warnings and informational findings.
-fail-on: error
+# Keep informational findings advisory; fail on warnings and errors.
+fail-on: warning
