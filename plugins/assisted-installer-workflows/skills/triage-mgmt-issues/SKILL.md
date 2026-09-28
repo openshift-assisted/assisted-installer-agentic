@@ -108,7 +108,8 @@ Return the aggregate report and optionally save its JSON to the requested local
 path. This is the only permitted write; Jira/source remain read-only and no tests
 are run.
 
-- `complete`: enumeration finished and every selected issue has a valid grade.
+- `complete`: enumeration finished and every selected issue is either graded or
+  intentionally skipped (`ai-triage-skip`).
 - `partial`: at least one issue was graded and at least one remains ungraded.
 - `blocked`: a prerequisite or enumeration failed, or no selected issue could be graded.
 - `empty`: enumeration finished with zero matches; no issues were graded.

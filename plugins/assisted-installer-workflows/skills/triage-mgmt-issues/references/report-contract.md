@@ -64,6 +64,9 @@ Each issue entry contains:
 
 Require `selected = graded + ungraded = length(selected_keys) = length(issues)`.
 Skipped issues are counted as `ungraded`; the invariant is preserved.
+A run is `complete` when every selected issue is either graded or intentionally
+skipped (`ai-triage-skip`); `partial` applies only when at least one selected
+issue is ungraded without a skip label.
 Counts describe selected issues, not all project matches when a limit applies or
 retrieval is incomplete. A successful limited run can be `complete` even when
 additional matches were not selected. No matches imply
