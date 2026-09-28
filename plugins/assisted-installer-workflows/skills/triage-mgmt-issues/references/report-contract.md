@@ -42,17 +42,37 @@ Each issue entry contains:
 - `issue_key`, `issue_url`, `summary`: selection metadata; unknown values are null.
 - `skill_used`: reported skill identity, or null if unavailable.
 - `outcome`: `graded` or `ungraded`.
+- `label`: the Jira label to apply, formatted as `ai-triage-complexity-N` where N
+  is the integer complexity score, or null if the issue was not graded.
+- `confidence_label`: the Jira label to apply, formatted as
+  `ai-triage-confidence-{confidence}` where `{confidence}` is `high` or
+  `medium`, or null if the issue was not graded or was skipped.
+- `skip_label`: `ai-triage-skip` when the issue must be skipped, otherwise
+  null. An issue is skipped when any of the following applies: (1) the agent
+  lacks permission to view relevant links or information required for the
+  assessment, (2) the issue description is missing or too vague to assess,
+  (3) the grading result has low confidence, or (4) the agent cannot produce
+  a defensible complexity score on the current run (including a blocked
+  result, a malformed or missing result, or an execution failure). When
+  `skip_label` is set, `label` and `confidence_label` must be null.
+- `skip_reason`: a concise explanation of which skip criterion applied, or
+  null when `skip_label` is null. Required when `skip_label` is set.
 - `result`: validated, unchanged JSON returned by `jira-triage-complexity`, or null
   if no valid result was obtained. A valid blocked result is retained as ungraded.
+  Skipped entries retain the shared result or error for auditability.
 - `error`: reason for an ungraded outcome, or null when graded.
 
 Require `selected = graded + ungraded = length(selected_keys) = length(issues)`.
+Skipped issues are counted as `ungraded`; the invariant is preserved.
 Counts describe selected issues, not all project matches when a limit applies or
 retrieval is incomplete. A successful limited run can be `complete` even when
 additional matches were not selected. No matches imply
 `empty` only after successful retrieval. A prerequisite failure before retrieval
 has zero counts and `blocked` status. Preserve discovered keys as ungraded if
 enumeration fails; do not invent records for keys the provider never returned.
+
+The canonical JQL in `SKILL.md` excludes `ai-triage-skip`, so issues that
+receive a skip label are not selected by future runs.
 
 Write failures change only `report_file`. Always return grades and errors to the
 caller even when the optional file cannot be written.
