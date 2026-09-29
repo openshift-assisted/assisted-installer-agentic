@@ -25,6 +25,8 @@ belong to the calling workflow; do not perform either here.
 2. Establish the requested change, acceptance criteria, affected components,
    design work, risks, and likely validation. Inspect relevant repository
    guidance and code when available and useful; repository access is optional.
+   Use supplied repository mappings before declaring a repository unknown.
+   Missing repository access alone does not block a score supported by other evidence.
 3. Apply the [scoring rubric](references/scoring-rubric.md). Distinguish observed
    facts from inference and cite sources. Missing information reduces confidence
    or prevents grading; it does not automatically increase complexity.

@@ -7,8 +7,8 @@ description: Use when grading unassigned MGMT Jira bugs in To Do or New status b
 
 ## Inputs and prerequisites
 
-Require Jira read access and access to `jira-triage-complexity` from
-`assisted-installer-skills`. Load its public contract and the
+Require Jira read access and access to `assisted-installer-context` and
+`jira-triage-complexity` from `assisted-installer-skills`. Load both skills and the
 [workflow report contract](references/report-contract.md). Block if unavailable.
 
 The invoker supplies authenticated Jira read access and handles the choice of
@@ -40,8 +40,10 @@ limits assessments, not the query.
 ## Grade each issue
 
 For each selected issue, grade it using `jira-triage-complexity` from
-`assisted-installer-skills`. Pass the issue payload, sources, repository
-context, and the per-issue result contract. Each invocation must:
+`assisted-installer-skills`. Use the loaded `assisted-installer-context` to identify
+likely repositories and context. Pass the relevant repository mapping and deployment context
+alongside the issue payload, sources, caller-supplied repository context, and the
+per-issue result contract. Each invocation must:
 
 - Load and use `jira-triage-complexity` for that issue only.
 - Follow the skill's rubric and contract, fetching additional context only
