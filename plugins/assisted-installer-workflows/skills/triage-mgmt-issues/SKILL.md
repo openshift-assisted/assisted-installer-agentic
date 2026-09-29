@@ -112,7 +112,8 @@ are run.
 
 - `complete`: enumeration finished and every selected issue is either graded or
   intentionally skipped (`ai-triage-skip`).
-- `partial`: at least one issue was graded and at least one remains ungraded.
+- `partial`: at least one issue was graded and at least one remains ungraded
+  without a skip label.
 - `blocked`: a prerequisite or enumeration failed, or no selected issue could be graded.
 - `empty`: enumeration finished with zero matches; no issues were graded.
 
