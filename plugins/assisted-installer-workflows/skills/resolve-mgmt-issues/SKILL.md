@@ -53,9 +53,10 @@ Record exact approved keys; clarify ambiguous answers and get explicit approval
 for any additional issue. Wait for approval; silence is not consent.
 Return `awaiting_approval` if a response is unavailable, or `declined` for none.
 
-Approval covers implementation under existing session permissions. Preserve
-external skills' approval checkpoints and prior authorization without repeating
-approvals. Selection alone does not authorize Jira updates, merging, or deployment.
+Approval covers implementation and opening a PR for each approved issue under
+existing session permissions. Preserve external skills' approval checkpoints
+and prior authorization without repeating approvals. Selection alone does not
+authorize Jira updates, merging, or deployment.
 
 ## Implement the approved issues
 
@@ -66,9 +67,13 @@ obtain renewed approval if the requested fix has materially changed.
 Load and invoke the chosen SDLC skill or workflow using its public contract.
 Pass the issue key/URL, current context, repository, approved scope, authorization,
 and constraints. Require it to follow repository instructions, isolate changes
-per issue, implement the fix, validate it, and return evidence. Missing or failed
-skill loading/invocation blocks that issue; do not substitute a named skill or
-implement its procedure yourself.
+per issue, implement the fix, validate it, open a PR, and verify passing CI on the
+latest PR revision before reporting completion. Require it to inspect CI failures,
+resolve them within the approved scope, and recheck CI after fixes; report blockers
+it cannot resolve. Require the PR link in its results; a `complete` status is
+sufficient confirmation of passing CI, without returning CI results as evidence.
+Missing or failed skill loading/invocation blocks that issue; do not substitute
+a named skill or implement its procedure yourself.
 
 Wait for results; invocation alone is not success. Preserve partial work, continue
 independent approved issues, and stop work dependent on failed prerequisites.
@@ -78,14 +83,16 @@ Do not automatically retry invocations, replace candidates, or poll for more wor
 
 Return the query/completeness, N, counts, ranked candidates, approved keys, and
 per-issue outcomes; optionally save to the requested local path. Include issue
-links, skills used, changes/artifacts, validation evidence, and blockers, skips,
-or pending approvals. Mark unapproved issues `not_approved`. Distinguish a produced
-fix from Jira closure.
+links, skills used, changes/artifacts, PR links, validation evidence, and
+blockers, skips, or pending approvals. Mark unapproved issues `not_approved`.
+Distinguish a produced fix from Jira closure.
 
 - `empty`: complete search found no matches.
 - `awaiting_approval`: a user choice or approval is pending; retain completed work.
 - `declined`: no presented issues were approved.
-- `complete`: every approved issue is implemented and validated, with no work pending.
+- `complete`: every approved issue is implemented and validated, with a PR opened
+  and passing CI on its latest revision, with no work pending. Pending, failed,
+  or unverified CI does not qualify as complete.
 - `partial`: some approved issues completed; others were skipped, blocked, or failed.
 - `blocked`: invalid input, incomplete retrieval, no rankable candidates, or no
   approved issue could complete.
