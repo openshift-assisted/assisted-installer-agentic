@@ -12,8 +12,8 @@ description: Use when selecting high-confidence, low-complexity MGMT Jira bugs f
 - Optional: repository context, preferred external software development lifecycle
   (SDLC) skill or workflow, and local report path.
 - Require authenticated Jira search and issue retrieval through the invoker's
-  available capabilities. Implementation also requires an external SDLC skill;
-  its absence does not block read-only selection.
+  available capabilities. Implementation requires an external SDLC skill; its
+  absence does not block read-only selection.
 
 Own selection, approval, sequencing, and reporting. Use existing triage labels;
 external SDLC skills own implementation and validation.
@@ -53,16 +53,25 @@ Record exact approved keys; clarify ambiguous answers and get explicit approval
 for any additional issue. Wait for approval; silence is not consent.
 Return `awaiting_approval` if a response is unavailable, or `declined` for none.
 
-Approval covers implementation and opening a PR for each approved issue under
-existing session permissions. Preserve external skills' approval checkpoints
-and prior authorization without repeating approvals. Selection alone does not
-authorize Jira updates, merging, or deployment.
+Approval authorizes assigning each approved issue to the approver, moving it to
+`In Progress` in Jira, implementing it, and opening a PR under existing session
+permissions. Preserve external skills' approval checkpoints and prior
+authorization without repeating approvals. Selection alone does not authorize
+Jira updates, merging, or deployment.
 
 ## Implement the approved issues
 
 Process approved issues in displayed order. Refresh each before starting: skip
 and report issues that no longer qualify or have conflicting complexity labels;
 obtain renewed approval if the requested fix has materially changed.
+
+Before invoking the SDLC skill, assign the issue to the approving user's Jira
+account and transition it to `In Progress`. Do not guess the approver's Jira
+identity or use another account. Verify both updates succeeded before starting
+implementation. If the approver's Jira identity, Jira write access, or a valid
+status transition is unavailable or either update fails, do not start that
+issue's implementation; report it as blocked with the reason and disclose any
+update that succeeded before the failure.
 
 Load and invoke the chosen SDLC skill or workflow using its public contract.
 Pass the issue key/URL, current context, repository, approved scope, authorization,
@@ -83,8 +92,9 @@ Do not automatically retry invocations, replace candidates, or poll for more wor
 
 Return the query/completeness, N, counts, ranked candidates, approved keys, and
 per-issue outcomes; optionally save to the requested local path. Include issue
-links, skills used, changes/artifacts, PR links, validation evidence, and
-blockers, skips, or pending approvals. Mark unapproved issues `not_approved`.
+links, confirmed Jira assignees and statuses, skills used, changes/artifacts, PR
+links, validation evidence, and blockers, skips, or pending approvals. Mark
+unapproved issues `not_approved`.
 Distinguish a produced fix from Jira closure.
 
 - `empty`: complete search found no matches.
