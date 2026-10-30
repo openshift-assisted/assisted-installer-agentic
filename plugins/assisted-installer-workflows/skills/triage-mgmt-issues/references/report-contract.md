@@ -45,16 +45,18 @@ Each issue entry contains:
 - `label`: the Jira label to apply, formatted as `ai-triage-complexity-N` where N
   is the integer complexity score, or null if the issue was not graded.
 - `confidence_label`: the Jira label to apply, formatted as
-  `ai-triage-confidence-{confidence}` where `{confidence}` is `high` or
-  `medium`, or null if the issue was not graded or was skipped.
-- `skip_label`: `ai-triage-skip` when the issue must be skipped, otherwise
-  null. An issue is skipped when any of the following applies: (1) the agent
-  lacks permission to view relevant links or information required for the
-  assessment, (2) the issue description is missing or too vague to assess,
-  (3) the grading result has low confidence, or (4) the agent cannot produce
-  a defensible complexity score on the current run (including a blocked
-  result, a malformed or missing result, or an execution failure). When
-  `skip_label` is set, `label` and `confidence_label` must be null.
+  `ai-triage-confidence-{confidence}` where `{confidence}` is `high`, `medium`,
+  or `low`, or null if the issue was not graded or was skipped.
+- `skip_label`: `ai-triage-skip` when the available issue evidence is
+  insufficient for a defensible assessment, otherwise null. Consider the
+  title, description, comments, links or attachments, repository and
+  deployment context, and grading rationale together. A missing description
+  alone is not sufficient when the title or other evidence clearly describes
+  the issue. Access denial or low confidence is a skip reason only when it
+  leaves material context gaps that prevent a defensible score. A malformed or
+  missing result, or an execution or loading failure, is ungraded without a
+  skip label because it does not by itself show that issue context is missing.
+  When `skip_label` is set, `label` and `confidence_label` must be null.
 - `skip_reason`: a concise explanation of which skip criterion applied, or
   null when `skip_label` is null. Required when `skip_label` is set.
 - `result`: validated, unchanged JSON returned by `jira-triage-complexity`, or null
@@ -65,8 +67,9 @@ Each issue entry contains:
 Require `selected = graded + ungraded = length(selected_keys) = length(issues)`.
 Skipped issues are counted as `ungraded`; the invariant is preserved.
 A run is `complete` when every selected issue is either graded or intentionally
-skipped (`ai-triage-skip`); `partial` applies only when at least one selected
-issue is ungraded without a skip label.
+skipped (`ai-triage-skip`); `partial` applies when at least one selected issue
+is ungraded without a skip label, including an assessment that failed because
+of a malformed result or execution error.
 Counts describe selected issues, not all project matches when a limit applies or
 retrieval is incomplete. A successful limited run can be `complete` even when
 additional matches were not selected. No matches imply

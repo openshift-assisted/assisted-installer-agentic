@@ -53,7 +53,7 @@ per-issue result contract. Each invocation must:
   null for skipped or ungraded issues.
 - Include a `confidence_label` field in the per-issue entry:
   `ai-triage-confidence-{confidence}` where `{confidence}` is the confidence
-  value from the grading result (`high` or `medium`). Set
+  value from the grading result (`high`, `medium`, or `low`). Set
   `confidence_label` to null for skipped or ungraded issues.
 - Include a `skip_label` field and a `skip_reason` field in the per-issue
   entry. When the issue is graded normally, both are null. When the issue
@@ -75,27 +75,27 @@ substitute skills, or grade in the parent.
 
 ### Skip decision
 
-After interpreting each per-issue result, apply `ai-triage-skip` when any of
-the following criteria is met:
-
-1. **Access denial**: the agent lacks permission to view links, attachments,
-   or other information required for the assessment.
-2. **Missing or vague description**: the issue description is absent or too
-   vague to support a defensible complexity score.
-3. **Low confidence**: the grading result is `complete` but has
-   `confidence: low`. The single-issue skill may return a provisional
-   low-confidence rating; this workflow treats it as ungradable.
-4. **No valid result**: the agent cannot produce a defensible complexity
-   score on the current run. This includes a `blocked` result from the
-   skill, a malformed or missing result, and any execution or loading
-   failure that prevents obtaining a valid outcome.
+Apply `ai-triage-skip` only when the available evidence does not provide ample
+context for a defensible complexity score. Evaluate the issue as a whole using
+the title, description, comments, links or attachments, repository and
+deployment context, and the grading result's sources and rationale. Do not use
+any single missing field as an automatic skip reason: a missing or sparse
+description is fine when the title clearly describes the issue or other
+available evidence makes the requested change and scope clear enough to grade.
+Likewise, access denial or low confidence warrants a skip only when it leaves
+material context gaps that prevent a defensible score.
 
 A skipped issue is recorded as `ungraded` with `skip_label` set to
-`ai-triage-skip` and `skip_reason` set to a concise explanation of the
-criterion that applied. Its `label` and `confidence_label` must be null.
-A normally graded issue (valid score with confidence `high` or `medium`)
-keeps its `label` and `confidence_label` values and has `skip_label` and
-`skip_reason` set to null.
+`ai-triage-skip` and `skip_reason` set to a concise explanation that the
+available context was insufficient. Its `label` and `confidence_label` must be
+null. A valid `complete` result is graded even when its confidence is `low`,
+provided the result is defensible and the available context is sufficient; its
+`confidence_label` is `ai-triage-confidence-low`.
+
+A malformed or missing result, or an execution or loading failure, is not by
+itself evidence that the issue lacks context. Preserve such an issue as
+`ungraded` without `ai-triage-skip`, explain the failure in `error`, and let the
+aggregate status report the incomplete assessment.
 
 ## Labeling
 
