@@ -14,6 +14,8 @@ required for installation.
 - [`assisted-installer-workflows`](plugins/assisted-installer-workflows/)
   contains interactive, multi-step workflows and depends on shared skills when
   needed.
+- [`assisted-installer-mcp`](plugins/assisted-installer-mcp/) bundles
+  opt-in MCP server connections with skills that direct their use.
 
 ## Installation
 

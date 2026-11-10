@@ -1,0 +1,22 @@
+{
+  "name": "assisted-installer-mcp",
+  "version": "0.1.0",
+  "description": "MCP server connections and usage skills for the Assisted Installer engineering team.",
+  "author": {
+    "name": "OpenShift Assisted Installer team"
+  },
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Assisted Installer MCP",
+    "shortDescription": "MCP servers for Assisted Installer engineering teams.",
+    "longDescription": "Bundles MCP server connections with skills that direct their use for Assisted Installer engineering tasks.",
+    "developerName": "OpenShift Assisted Installer team",
+    "category": "Developer Tools",
+    "capabilities": ["Read"],
+    "defaultPrompt": [
+      "Verify the assisted-installer-mcp plugin's test MCP server connection.",
+      "Which MCP servers does the assisted-installer-mcp plugin provide?"
+    ]
+  }
+}

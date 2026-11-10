@@ -1,8 +1,9 @@
 # Plugins
 
-The repository distributes two plugins through the `assisted-installer`
+The repository distributes three plugins through the `assisted-installer`
 marketplace. Each plugin packages Markdown skills with supporting references;
-its Claude and Codex manifests expose the same skill directory. Installation
+its Claude and Codex manifests expose the same skill directory, and the MCP
+plugin additionally bundles server connection configuration. Installation
 uses those directories directly, without a build step. See the
 [installation instructions](installation.md).
 
@@ -12,6 +13,7 @@ uses those directories directly, without a build step. See the
 | --- | --- |
 | [`assisted-installer-skills`](../plugins/assisted-installer-skills/) | Shared, bounded capabilities that can be used independently or composed by a workflow. |
 | [`assisted-installer-workflows`](../plugins/assisted-installer-workflows/) | End-to-end orchestration that owns task selection, sequencing, checkpoints, and aggregate results. |
+| [`assisted-installer-mcp`](../plugins/assisted-installer-mcp/) | Opt-in MCP server connections, with skills that direct their use. |
 
 Browse each plugin directory or the host's plugin browser for its current
 contents. Individual skill instructions and supporting references define their
@@ -29,6 +31,13 @@ Shared skills remain independently usable. Workflows load required skills
 through the host's discovery mechanism and stop dependent work if a required
 skill is unavailable. References needed at runtime stay inside their plugin so
 they remain usable after installation.
+
+MCP servers are packaged separately from shared skills so installing them is a
+deliberate choice. Hosts activate a plugin's MCP connections when the plugin
+loads, not only when one of its skills runs, so keep them out of plugins users
+install for unrelated capabilities. Connection files are host-specific:
+Claude Code reads `.mcp.json`, and Codex reads the portable root `plugin.json`
+and `mcp.json` manifests; keep the server entries in them equivalent.
 
 Repository-local contributor guidance is maintained separately from distributed
 plugins. See [Contributing](../CONTRIBUTING.md) for placement and authoring rules.

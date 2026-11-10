@@ -1,0 +1,9 @@
+{
+  "name": "assisted-installer-mcp",
+  "version": "0.1.0",
+  "description": "MCP server connections and usage skills for the Assisted Installer engineering team.",
+  "author": {
+    "name": "OpenShift Assisted Installer team"
+  },
+  "license": "MIT"
+}

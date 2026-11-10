@@ -1,7 +1,9 @@
 # Installation
 
 Install `assisted-installer-skills` for individual capabilities. Install both
-plugins to use workflows that depend on shared skills. See the
+plugins to use workflows that depend on shared skills. Install
+`assisted-installer-mcp` to connect bundled MCP servers; it is optional and
+independent of the other plugins. See the
 [plugin guide](plugins.md) for package roles and dependencies.
 No build step or validation tooling is required to use the plugins.
 
@@ -24,12 +26,17 @@ Or add a local clone:
 /plugin marketplace add /path/to/assisted-installer-agentic
 ```
 
-Then install the plugins:
+Then install the plugins you wish to use:
 
 ```text
 /plugin install assisted-installer-skills@assisted-installer
 /plugin install assisted-installer-workflows@assisted-installer
+/plugin install assisted-installer-mcp@assisted-installer
 ```
+
+The `assisted-installer-mcp` install is optional. Hosts activate its MCP
+connections when the plugin loads, so install it only when those connections
+are wanted.
 
 See [Claude Code marketplace instructions](https://code.claude.com/docs/en/discover-plugins).
 
@@ -49,17 +56,18 @@ codex plugin marketplace add /path/to/assisted-installer-agentic
 
 Start `codex` and enter `/plugins` to open the plugin browser. Install
 `assisted-installer-skills` and, if needed, `assisted-installer-workflows` from
-`assisted-installer`. Start a new chat before using the installed skills.
+`assisted-installer`; optionally install `assisted-installer-mcp` for its MCP
+connections. Start a new chat before using the installed skills.
 See the official [marketplace commands](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli)
 and [Codex plugin browser instructions](https://developers.openai.com/learn/developers-codex-plugin).
 
 ## Marketplace details
 
-The repository has native marketplace catalogs for both hosts:
+The repository has native marketplace catalogs for both harnesses:
 [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json) is the
 Claude Code catalog and [`.agents/plugins/marketplace.json`](../.agents/plugins/marketplace.json)
 is the Codex catalog. Both use the stable
-marketplace name `assisted-installer` and expose both plugins under `plugins/`.
+marketplace name `assisted-installer` and expose all plugins under `plugins/`.
 The workflows plugin declares the shared-skills plugin as a Claude dependency;
 Codex users should install both plugins when a workflow requires shared skills.
 

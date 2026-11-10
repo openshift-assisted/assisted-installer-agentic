@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Portable agentic workflows and shared skills used by OpenShift's Assisted Installer Team",
-    "version": "0.7.0"
+    "version": "0.8.0"
   },
   "plugins": [
     {
@@ -16,6 +16,10 @@
     {
       "name": "assisted-installer-skills",
       "source": "./plugins/assisted-installer-skills"
+    },
+    {
+      "name": "assisted-installer-mcp",
+      "source": "./plugins/assisted-installer-mcp"
     }
   ]
 }
