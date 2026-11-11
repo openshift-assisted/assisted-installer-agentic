@@ -1,0 +1,18 @@
+{
+  "name": "assisted-installer-agentic",
+  "version": "0.8.0",
+  "description": "Portable, reusable agentic workflows and shared skills for local coding harnesses and hosted agent platforms.",
+  "license": "MIT",
+  "private": true,
+  "keywords": [
+    "pi-package"
+  ],
+  "pi": {
+    "extensions": [
+      "./plugins/assisted-installer-mcp/extensions/register-mcp.ts"
+    ],
+    "skills": [
+      "./plugins/*/skills"
+    ]
+  }
+}

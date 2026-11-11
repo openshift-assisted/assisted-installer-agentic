@@ -30,6 +30,11 @@ report its unavailability. Do not substitute another skill or reimplement it.
   documentation may link across plugins.
 - Register every plugin exactly once at its canonical path in both marketplace
   catalogs. Its Claude and Codex manifests must agree on name and version.
+- The repository-root `package.json` is the Pi package manifest for the whole
+  repository. Keep its `pi.extensions` entries pointing at existing extension
+  files and its `pi.skills` globs covering every plugin's skills directory;
+  validation checks this coverage. Move its version with marketplace release
+  metadata.
 - Declare required shared-plugin dependencies in the Claude manifest; do not
   invent unsupported dependency fields for Codex.
 - When releasing distributed skill behavior changes, update the plugin manifests

@@ -19,8 +19,8 @@ required for installation.
 
 ## Installation
 
-See the [installation guide](docs/installation.md) for Claude Code and Codex,
-using either the Git marketplace or a local clone.
+See the [installation guide](docs/installation.md) for Claude Code, Codex, and
+Pi, using either the Git marketplace or a local clone.
 
 ## Documentation
 

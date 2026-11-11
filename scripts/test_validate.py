@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from test_support import create_repo
 from validate import Validator
 
 
@@ -78,6 +79,45 @@ class ValidatorTests(unittest.TestCase):
     def test_repository_is_valid(self):
         validator = Validator(REPO_ROOT)
         self.assertEqual(validator.run(), 0, validator.errors)
+
+    def test_pi_package_manifest_drift_is_reported(self):
+        for case in ("valid", "missing", "uncovered-skill", "missing-extension"):
+            with self.subTest(case=case):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    create_repo(root)
+                    extension = root / "plugins" / "workflow" / "extensions" / "register.ts"
+                    extension.parent.mkdir(parents=True)
+                    extension.write_text("export default function () {}\n", encoding="utf-8")
+                    package = {
+                        "name": "sample-repo",
+                        "version": "0.1.0",
+                        "pi": {
+                            "skills": ["./plugins/*/skills"],
+                            "extensions": ["./plugins/workflow/extensions/register.ts"],
+                        },
+                    }
+                    if case == "uncovered-skill":
+                        package["pi"]["skills"] = ["./plugins/shared/skills"]
+                    elif case == "missing-extension":
+                        package["pi"]["extensions"] = ["./plugins/workflow/extensions/absent.ts"]
+                    if case == "missing":
+                        (root / "package.json").unlink()
+                    else:
+                        (root / "package.json").write_text(json.dumps(package), encoding="utf-8")
+                    validator = Validator(root)
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        result = validator.run()
+                    if case == "valid":
+                        self.assertEqual(result, 0, validator.errors)
+                    else:
+                        self.assertEqual(result, 1)
+                        expected = {
+                            "missing": "missing package.json",
+                            "uncovered-skill": "pi.skills does not cover plugins/workflow/skills",
+                            "missing-extension": "missing pi.extensions entry",
+                        }[case]
+                        self.assertTrue(any(expected in error for error in validator.errors), validator.errors)
 
     def test_single_skill_is_valid(self):
         with tempfile.TemporaryDirectory() as directory:

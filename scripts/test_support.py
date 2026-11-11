@@ -41,6 +41,10 @@ def create_repo(root: Path) -> None:
   write_json(root / ".agents" / "plugins" / "marketplace.json", {
     "name": "sample", "interface": {"displayName": "Sample"}, "plugins": codex_entries,
   })
+  write_json(root / "package.json", {
+    "name": "sample-repo", "version": "0.1.0",
+    "pi": {"skills": ["./plugins/*/skills"], "extensions": []},
+  })
   (root / "README.md").write_text(
     "# Repository\n\n[Workflow](plugins/workflow/skills/workflow-skill/SKILL.md)\n",
     encoding="utf-8",

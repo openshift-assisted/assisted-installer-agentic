@@ -20,7 +20,7 @@ are not needed to install or use the plugins.
 
 | Tool | Purpose in this repository | Configuration or implementation |
 | --- | --- | --- |
-| Repository Python validator | Checks required skill frontmatter, names, matching manifests, marketplace coverage, local dependency registration, plugin link boundaries, and development-skill aliases. | [scripts/validate.py](../scripts/validate.py) |
+| Repository Python validator | Checks required skill frontmatter, names, matching manifests, marketplace coverage, local dependency registration, plugin link boundaries, development-skill aliases, and Pi package manifest coverage. | [scripts/validate.py](../scripts/validate.py) |
 | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) | Applies Markdown formatting rules, such as consistent headings, lists, and code fences. | [.markdownlint-cli2.yaml](../.markdownlint-cli2.yaml) |
 | [Lychee](https://lychee.cli.rs/) | Checks local link targets and external URL availability. External checks require network access. | [.lychee.toml](../.lychee.toml) |
 | [Skillsaw](https://github.com/stbenjam/skillsaw) | Adds static checks for skill and plugin structure, instruction quality, references, and suspicious content. | [.skillsaw.yaml](../.skillsaw.yaml) |

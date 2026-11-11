@@ -4,8 +4,9 @@ The repository distributes three plugins through the `assisted-installer`
 marketplace. Each plugin packages Markdown skills with supporting references;
 its Claude and Codex manifests expose the same skill directory, and the MCP
 plugin additionally bundles server connection configuration. Installation
-uses those directories directly, without a build step. See the
-[installation instructions](installation.md).
+uses those directories directly, without a build step. Pi installs the same
+directories as one package declared by the repository-root `package.json`. See
+the [installation instructions](installation.md).
 
 ## Plugin roles
 
@@ -37,7 +38,13 @@ deliberate choice. Hosts activate a plugin's MCP connections when the plugin
 loads, not only when one of its skills runs, so keep them out of plugins users
 install for unrelated capabilities. Connection files are host-specific:
 Claude Code reads `.mcp.json`, and Codex reads the portable root `plugin.json`
-and `mcp.json` manifests; keep the server entries in them equivalent.
+and `mcp.json` manifests; keep the server entries in them equivalent. Pi loads
+the same portable `mcp.json` through the plugin's
+[`extensions/register-mcp.ts`](../plugins/assisted-installer-mcp/extensions/register-mcp.ts),
+which registers every server disabled because Pi installs the whole
+repository as one package; users enable connections through `/mcp` or a
+same-name entry in their own `mcp.json`, as described in the
+[installation instructions](installation.md#pi).
 
 Repository-local contributor guidance is maintained separately from distributed
 plugins. See [Contributing](../CONTRIBUTING.md) for placement and authoring rules.

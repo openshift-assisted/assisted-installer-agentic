@@ -11,6 +11,8 @@ Add the marketplace from Git, or use an existing local clone. If the repository
 is private, your Git credentials must have read access.
 For SSH authentication, substitute
 `git@github.com:openshift-assisted/assisted-installer-agentic.git` for the HTTPS URL.
+Pi instead installs the whole repository as a single package; see the
+[Pi](#pi) section for per-plugin control.
 
 ## Claude Code
 
@@ -61,6 +63,49 @@ connections. Start a new chat before using the installed skills.
 See the official [marketplace commands](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli)
 and [Codex plugin browser instructions](https://developers.openai.com/learn/developers-codex-plugin).
 
+## Pi
+
+Run these commands in your terminal. Pi installs the whole repository as one
+package, so every plugin's skills load together and per-plugin control uses
+the resource toggles described below:
+
+```bash
+pi install git:github.com/openshift-assisted/assisted-installer-agentic.git
+```
+
+Or from a local clone:
+
+```bash
+pi install /path/to/assisted-installer-agentic
+```
+
+`pi update --extensions` reconciles the checkout with the configured Git ref
+on later starts. To try the package without installing it, run
+`pi -e /path/to/assisted-installer-agentic`. See the
+[Pi package documentation](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/packages.md).
+
+MCP connections stay opt-in. The `assisted-installer-mcp` extension registers
+the servers from the plugin's `mcp.json` without connecting them. Enable one
+for the current session with `/mcp`, or persistently by copying its entry
+from the plugin's `mcp.json` into `~/.pi/agent/mcp.json`; an entry with the
+same name takes precedence over the extension's registration.
+
+To exclude a plugin's resources instead of skipping a plugin install, run
+`pi config` and disable them, or narrow the package entry in
+`~/.pi/agent/settings.json` (the source matches your `pi install` argument):
+
+```json
+{
+  "packages": [
+    {
+      "source": "git:github.com/openshift-assisted/assisted-installer-agentic.git",
+      "extensions": ["!plugins/assisted-installer-mcp/**"],
+      "skills": ["!plugins/assisted-installer-mcp/skills/**"]
+    }
+  ]
+}
+```
+
 ## Marketplace details
 
 The repository has native marketplace catalogs for both harnesses:
@@ -77,4 +122,5 @@ adding the path again. Codex tracks configured marketplace sources by name, so
 renaming the catalog does not migrate an existing local registration.
 
 Each plugin carries both `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json`
-manifests.
+manifests. Pi uses the repository-root `package.json` instead of a marketplace
+catalog; it points at the same plugin directories.

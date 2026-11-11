@@ -8,6 +8,7 @@ import json
 import os
 import re
 import sys
+from fnmatch import fnmatch
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
@@ -287,6 +288,68 @@ class Validator:
             if not isinstance(entry.get("category"), str) or not entry["category"].strip():
                 self.error(f"{marketplace.relative_to(self.repo_root)}: plugin entry missing category")
 
+    def validate_pi_package(self) -> None:
+        """Check the root Pi package manifest covers the distributed plugins."""
+        package_path = self.repo_root / "package.json"
+        try:
+            data = json.loads(package_path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            self.error("missing package.json: the repository is distributed to Pi as one package")
+            return
+        except json.JSONDecodeError as error:
+            self.error(f"package.json: invalid JSON: {error}")
+            return
+        if not isinstance(data, dict):
+            self.error("package.json: manifest must be an object")
+            return
+        if not re.fullmatch(r"\d+\.\d+\.\d+", str(data.get("version", ""))):
+            self.error("package.json: invalid semantic version")
+        pi_manifest = data.get("pi")
+        if not isinstance(pi_manifest, dict):
+            self.error("package.json: missing pi manifest")
+            return
+
+        extensions = pi_manifest.get("extensions", [])
+        if not isinstance(extensions, list):
+            self.error("package.json: pi.extensions must be a list")
+            extensions = []
+        for entry in extensions:
+            if not isinstance(entry, str) or entry.startswith(("/", "~")):
+                self.error(f"package.json: pi.extensions entries must be relative paths: {entry!r}")
+                continue
+            resolved = (self.repo_root / entry).resolve()
+            try:
+                resolved.relative_to(self.repo_root.resolve())
+            except ValueError:
+                self.error(f"package.json: pi.extensions entry escapes repository: {entry}")
+                continue
+            if not resolved.is_file():
+                self.error(f"package.json: missing pi.extensions entry: {entry}")
+
+        skills = pi_manifest.get("skills", [])
+        if not isinstance(skills, list):
+            self.error("package.json: pi.skills must be a list")
+            return
+        patterns: list[str] = []
+        for entry in skills:
+            if not isinstance(entry, str) or entry.startswith(("/", "~")):
+                self.error(f"package.json: pi.skills entries must be relative paths: {entry!r}")
+                return
+            patterns.append(entry.removeprefix("./").rstrip("/"))
+        plugins_root = self.repo_root / "plugins"
+        plugin_dirs = (
+            sorted(path for path in plugins_root.iterdir() if path.is_dir())
+            if plugins_root.is_dir()
+            else []
+        )
+        for plugin in plugin_dirs:
+            skills_dir = plugin / "skills"
+            if not skills_dir.is_dir():
+                continue
+            relative = skills_dir.relative_to(self.repo_root).as_posix()
+            if not any(fnmatch(relative, pattern) for pattern in patterns):
+                self.error(f"package.json: pi.skills does not cover {relative}")
+
     def validate_development_skills(self) -> list[Path]:
         """Keep local skills canonical in .agents, with relative Claude aliases."""
         skills_root = self.repo_root / ".agents" / "skills"
@@ -350,6 +413,10 @@ class Validator:
         self.validate_codex_marketplace()
         if self.claude_marketplace_name != self.codex_marketplace_name:
             self.error("Claude and Codex marketplace names must match")
+        if plugin_name is None:
+            # The Pi package manifest covers the whole repository, so it is
+            # checked only for full-checkout runs, not isolated plugins.
+            self.validate_pi_package()
         for host, catalog in (
             ("Claude", self.claude_marketplace_plugins),
             ("Codex", self.codex_marketplace_plugins),
