@@ -43,7 +43,19 @@ validation.
 
 ## Retrieve and rank candidates
 
-Search the `MGMT` project with this exact JQL:
+Selection runs in two phases: prioritized, then normal. First search the `MGMT`
+project for prioritized issues with this exact JQL:
+
+```jql
+project = MGMT AND issuetype = Bug AND assignee IS EMPTY AND status IN ("To Do", "New") AND labels = "ai-triage-prioritize" AND labels NOT IN (ai-triage-skip) ORDER BY priority DESC, key ASC
+```
+
+The prioritized query selects only on the `ai-triage-prioritize` label; it does
+not filter by confidence or complexity. Freeze the first N rankable candidates
+from it, or all of them if fewer qualify. If the prioritized phase filled all N
+slots, do not run the normal query. If it left slots open, search the `MGMT`
+project with this exact JQL, which additionally filters by confidence and
+complexity, and fill the remaining slots with its rankable candidates:
 
 ```jql
 project = MGMT AND issuetype = Bug AND assignee IS EMPTY AND status IN ("To Do", "New") AND labels = "ai-triage-confidence-high" AND labels IN ("ai-triage-complexity-1", "ai-triage-complexity-2") AND labels NOT IN (ai-triage-skip) ORDER BY priority DESC, key ASC
@@ -51,15 +63,21 @@ project = MGMT AND issuetype = Bug AND assignee IS EMPTY AND status IN ("To Do",
 
 See the [Jira field reference](https://confluence.atlassian.com/jirasoftware/advanced-searching-fields-reference-1528533189.html)
 for query syntax. Complete pagination and deduplicate by key, preserving query
-order across pages. Retrieval failure or uncertain completeness returns `blocked`
+order across pages, for whichever query ran. Deduplicate across phases: an
+issue already selected in the prioritized phase is not selected again from the
+normal query, even if it matches it. Retrieval failure or uncertain
+completeness in any executed search returns `blocked`
 with the error and discovered keys; select nothing from incomplete results.
 
-Issues labeled `ai-triage-skip` are excluded by the JQL. Exclude and report
-conflicting complexity labels without changing them. Group complexity 1 before
-2, preserving Jira's priority-descending, key-ascending order within each group;
-do not sort priority names or IDs yourself. Freeze the first
-N candidates, or all if fewer qualify. Selection covers caller-visible issues
-during retrieval, not a snapshot.
+Both queries exclude issues labeled `ai-triage-skip`. In the normal phase,
+exclude and report conflicting complexity labels without changing them. Group
+complexity 1 before 2, preserving Jira's priority-descending, key-ascending
+order within each group; do not sort priority names or IDs yourself. The
+prioritized phase preserves Jira's priority-descending, key-ascending order
+directly. Selection covers caller-visible issues during retrieval, not a
+snapshot. Report which phase selected each issue and the match counts from each
+executed search. Prioritized issues precede normal-phase issues in the frozen
+candidate list.
 
 ## Assess issues and propose outcomes
 
@@ -85,7 +103,8 @@ For each issue, propose one outcome:
 Present a numbered table with issue links, requested fixes, complexity, Jira
 priority, repositories, proposed outcome and rationale, and proposed SDLC skills
 or blockers. Include match, exclusion, and selection counts; explain that
-complexity takes precedence.
+complexity takes precedence in the normal phase. Prioritized issues may lack
+complexity labels; report them as ungraded.
 
 ## Obtain outcome-specific approval
 
@@ -141,7 +160,8 @@ approval. Do not replace candidates.
 
 ## Output and stopping conditions
 
-Return the query/completeness, N, counts, ranked candidates, approved
+Return the query/completeness, selection phase per issue, N, counts, ranked
+candidates, approved
 issue-to-outcome mappings, and per-issue outcomes; optionally save to the
 requested local path. Include issue links, proposed and approved outcomes,
 explicit declines, confirmed Jira assignees, statuses and labels, skills used,
@@ -150,7 +170,7 @@ confirmation, and blockers or pending approvals. Mark explicit work declines as
 `explicitly_declined`, distinguish them from `not_approved`, and report the
 verified label change. Distinguish a produced fix from Jira closure.
 
-- `empty`: complete search found no matches.
+- `empty`: all executed searches completed and found no matches.
 - `awaiting_approval`: an outcome choice or approval is pending; retain completed
   work.
 - `declined`: no presented issue outcome was approved, and any explicit work
